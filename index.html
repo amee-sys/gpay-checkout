@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harbor Lane Coffee</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Karla:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#fdfcfa; --card:#ffffff; --ink:#22201d; --muted:#6e6862;
+    --rule:#e5e1db; --accent:#7a4419; --accent-ink:#ffffff;
+    --ok:#2f6b45; --ok-bg:#e8f2eb; --bad:#9a3b33; --bad-bg:#f8eae8;
+    --f-display:"Fraunces",Georgia,serif; --f-body:"Karla","Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#171614; --card:#201e1b; --ink:#ece9e4; --muted:#a39c94;
+      --rule:#332f2a; --accent:#d99a5e; --accent-ink:#1a1815;
+      --ok:#7cc094; --ok-bg:#1a2a20; --bad:#e0938b; --bad-bg:#2c1c1a;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);
+       font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .bar{border-bottom:1px solid var(--rule);padding:1rem 1.25rem}
+  .bar .inner{max-width:60rem;margin:0 auto;display:flex;align-items:baseline;gap:0.75rem}
+  .brand{font-family:var(--f-display);font-weight:600;font-size:1.2rem;letter-spacing:-0.01em}
+  .bar small{color:var(--muted);font-size:0.78rem}
+  main{max-width:60rem;margin:0 auto;padding:2.5rem 1.25rem 5rem;
+       display:grid;grid-template-columns:1.3fr 1fr;gap:2.5rem;align-items:start}
+  @media (max-width:44rem){main{grid-template-columns:1fr;gap:2rem}}
+
+  .product{display:flex;flex-direction:column;gap:1rem}
+  .shot{aspect-ratio:4/3;border-radius:6px;border:1px solid var(--rule);
+        background:
+          radial-gradient(circle at 32% 34%, #d8b48a 0 16%, transparent 17%),
+          radial-gradient(circle at 63% 58%, #b98a5c 0 11%, transparent 12%),
+          linear-gradient(150deg,#f0e6d8,#cfae86);
+        display:flex;align-items:flex-end;padding:1rem}
+  .shot span{font-family:var(--f-display);color:#42301d;font-size:0.85rem;
+             background:rgba(255,255,255,.75);padding:0.2rem 0.5rem;border-radius:3px}
+  h1{font-family:var(--f-display);font-weight:600;font-size:1.85rem;margin:0;
+     letter-spacing:-0.015em;line-height:1.15}
+  .price{font-family:var(--f-display);font-size:1.35rem}
+  .desc{color:var(--muted);margin:0}
+  .meta{font-size:0.85rem;color:var(--muted);border-top:1px solid var(--rule);padding-top:0.9rem}
+
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:1.4rem}
+  h2{font-family:var(--f-display);font-weight:600;font-size:1.05rem;margin:0 0 1rem}
+  .row{display:flex;justify-content:space-between;gap:1rem;padding:0.4rem 0;font-size:0.92rem}
+  .row.total{border-top:1px solid var(--rule);margin-top:0.5rem;padding-top:0.8rem;
+             font-weight:600;font-size:1.05rem}
+  .qty{display:flex;align-items:center;gap:0.5rem;margin:0.4rem 0 1rem}
+  .qty button{width:30px;height:30px;border:1px solid var(--rule);background:var(--bg);
+              color:var(--ink);border-radius:4px;cursor:pointer;font-size:1rem;line-height:1}
+  .qty button:hover{border-color:var(--accent)}
+  .qty output{min-width:2ch;text-align:center;font-variant-numeric:tabular-nums}
+
+  /* buttonSizeMode 'fill' needs a sized container or the button will not render. */
+  #gpayHost{margin-top:1.2rem;height:48px}
+  #gpayHost:empty{height:0}
+  .fallback{margin-top:0.8rem;font-size:0.83rem;color:var(--muted)}
+  .msg{margin-top:1rem;padding:0.8rem 1rem;border-radius:6px;font-size:0.9rem;display:none}
+  .msg.show{display:block}
+  .msg.ok{background:var(--ok-bg);color:var(--ok)}
+  .msg.bad{background:var(--bad-bg);color:var(--bad)}
+  .msg b{display:block;margin-bottom:0.2rem}
+  details{margin-top:1rem;font-size:0.8rem;color:var(--muted)}
+  summary{cursor:pointer}
+  pre{background:var(--bg);border:1px solid var(--rule);border-radius:4px;padding:0.7rem;
+      overflow-x:auto;font-size:0.7rem;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+  footer{max-width:60rem;margin:0 auto;padding:0 1.25rem 3rem;color:var(--muted);font-size:0.78rem}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="inner">
+  <span class="brand">Harbor Lane Coffee</span>
+  <small>Single origin, roasted to order</small>
+</div></div>
+
+<main>
+  <div class="product">
+    <div class="shot"><span>Ethiopia Guji, washed</span></div>
+    <h1>Ethiopia Guji, Washed</h1>
+    <div class="price" id="unitPriceLabel">$24.99</div>
+    <p class="desc">A bright, tea like washed lot from the Guji zone. Jasmine and
+      bergamot up front, with a clean stone fruit finish. Roasted the morning it ships.</p>
+    <div class="meta">12 oz whole bean &middot; Ships in 1 to 2 business days &middot; Free shipping over $35</div>
+  </div>
+
+  <div class="panel">
+    <h2>Order summary</h2>
+
+    <div class="qty">
+      <button type="button" id="minus" aria-label="Decrease quantity">&minus;</button>
+      <output id="qty" aria-live="polite">1</output>
+      <button type="button" id="plus" aria-label="Increase quantity">+</button>
+    </div>
+
+    <div class="row"><span>Subtotal</span><span id="subtotal">$24.99</span></div>
+    <div class="row"><span>Shipping</span><span id="shipping">$5.00</span></div>
+    <div class="row"><span>Tax</span><span id="tax">$2.06</span></div>
+    <div class="row total"><span>Total</span><span id="total">$32.05</span></div>
+
+    <div id="gpayHost"></div>
+    <p class="fallback" id="fallback">Loading payment options.</p>
+
+    <div class="msg" id="msg"></div>
+
+    <details id="debug">
+      <summary>Technical detail</summary>
+      <pre id="debugOut">Nothing yet.</pre>
+    </details>
+  </div>
+</main>
+
+<footer>
+  Demonstration storefront used to validate an Authorize.net Google Pay integration.
+  Card data never reaches this page or its server in readable form.
+</footer>
+
+<script src="config.js"></script>
+<script>
+  const UNIT = 24.99, SHIP = 5.00, TAX_RATE = 0.0825;
+  let qty = 1, paymentsClient = null;
+
+  const $ = id => document.getElementById(id);
+  const money = n => '$' + n.toFixed(2);
+
+  function totals(){
+    const sub = UNIT * qty;
+    const tax = Math.round(sub * TAX_RATE * 100) / 100;
+    return { sub, ship: SHIP, tax, total: Math.round((sub + SHIP + tax) * 100) / 100 };
+  }
+
+  function paint(){
+    const t = totals();
+    $('qty').textContent = qty;
+    $('subtotal').textContent = money(t.sub);
+    $('shipping').textContent = money(t.ship);
+    $('tax').textContent = money(t.tax);
+    $('total').textContent = money(t.total);
+  }
+
+  $('plus').onclick  = () => { if (qty < 9) { qty++; paint(); } };
+  $('minus').onclick = () => { if (qty > 1) { qty--; paint(); } };
+  paint();
+
+  function say(kind, title, body){
+    const m = $('msg');
+    m.className = 'msg show ' + kind;
+    m.innerHTML = '<b></b><span></span>';
+    m.querySelector('b').textContent = title;
+    m.querySelector('span').textContent = body;
+  }
+  function debug(o){ $('debugOut').textContent = typeof o === 'string' ? o : JSON.stringify(o, null, 2); }
+  function noLib(){ $('fallback').textContent = 'Google Pay could not load. Card entry would appear here.'; }
+
+  const baseRequest = { apiVersion: 2, apiVersionMinor: 0 };
+
+  const cardPaymentMethod = () => ({
+    type: 'CARD',
+    parameters: {
+      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+      allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA']
+    },
+    tokenizationSpecification: {
+      type: 'PAYMENT_GATEWAY',
+      parameters: { gateway: 'authorizenet', gatewayMerchantId: window.GATEWAY_MERCHANT_ID || 'SET_ME' }
+    }
+  });
+
+  function init(){
+    paymentsClient = new google.payments.api.PaymentsClient({
+      environment: window.GPAY_ENV || 'TEST'
+    });
+    paymentsClient.isReadyToPay(
+      Object.assign({}, baseRequest, { allowedPaymentMethods: [cardPaymentMethod()] })
+    ).then(res => {
+      if (!res.result) { $('fallback').textContent = 'Google Pay is not available on this device.'; return; }
+      $('fallback').textContent = '';
+      $('gpayHost').appendChild(paymentsClient.createButton({
+        onClick: pay, buttonType: 'buy', buttonSizeMode: 'fill'
+      }));
+    }).catch(e => { $('fallback').textContent = 'Google Pay check failed.'; debug(e); });
+  }
+
+  function pay(){
+    const t = totals();
+    const req = Object.assign({}, baseRequest, {
+      allowedPaymentMethods: [cardPaymentMethod()],
+      merchantInfo: Object.assign(
+        { merchantName: 'Harbor Lane Coffee' },
+        window.GOOGLE_MERCHANT_ID ? { merchantId: window.GOOGLE_MERCHANT_ID } : {}
+      ),
+      transactionInfo: {
+        totalPriceStatus: 'FINAL',
+        totalPrice: t.total.toFixed(2),
+        currencyCode: 'USD',
+        countryCode: 'US'
+      }
+    });
+
+    paymentsClient.loadPaymentData(req).then(pd => {
+      // Current Google Pay API v2 location. Send the token to the server exactly
+      // as received: JSON transport preserves it byte for byte, and the signature
+      // is computed over those exact bytes.
+      const token = pd.paymentMethodData.tokenizationData.token;
+      say('ok', 'Processing', 'Sending your payment to the gateway.');
+
+      return fetch('/api/charge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, amount: t.total.toFixed(2), quantity: qty })
+      }).then(r => r.json()).then(result => {
+        debug(result);
+        if (result.approved) {
+          say('ok', 'Order confirmed', 'Transaction ' + result.transactionId +
+              ', authorization ' + result.authCode + '. Thank you.');
+          $('gpayHost').innerHTML = '';
+        } else {
+          say('bad', 'Payment not completed', result.message || 'The gateway declined this payment.');
+        }
+      });
+    }).catch(err => {
+      if (err && err.statusCode === 'CANCELED') return;
+      say('bad', 'Payment not completed', (err && err.statusMessage) || 'Google Pay returned an error.');
+      debug(err);
+    });
+  }
+</script>
+<!-- Loaded last, so init() and noLib() already exist when its load event fires. -->
+<script src="https://pay.google.com/gp/p/js/pay.js" onload="init()" onerror="noLib()"></script>
+</body>
+</html>
