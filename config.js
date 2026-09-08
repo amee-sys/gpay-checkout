@@ -1,7 +1,7 @@
 // Public, non-secret configuration. Safe to commit and safe to serve.
 // Secrets live only in Cloudflare environment variables, never here.
 
-window.GATEWAY_MERCHANT_ID = '2786509';
+window.GATEWAY_MERCHANT_ID = '960520';
 
 // 'TEST' until Google approves your production access request.
 window.GPAY_ENV = 'TEST';
