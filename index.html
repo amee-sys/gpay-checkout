@@ -173,20 +173,23 @@
     }
   });
 
-  function init(){
-    paymentsClient = new google.payments.api.PaymentsClient({
-      environment: window.GPAY_ENV || 'TEST'
-    });
-    paymentsClient.isReadyToPay(
-      Object.assign({}, baseRequest, { allowedPaymentMethods: [cardPaymentMethod()] })
-    ).then(res => {
-      if (!res.result) { $('fallback').textContent = 'Google Pay is not available on this device.'; return; }
-      $('fallback').textContent = '';
-      $('gpayHost').appendChild(paymentsClient.createButton({
-        onClick: pay, buttonType: 'buy', buttonSizeMode: 'fill'
-      }));
-    }).catch(e => { $('fallback').textContent = 'Google Pay check failed.'; debug(e); });
-  }
+ function currentButtonColor(){
+     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'white' : 'black';
+   }
+
+   function init(){
+     paymentsClient = new google.payments.api.PaymentsClient({ environment: window.GPAY_ENV || 'TEST' });
+     paymentsClient.isReadyToPay(
+       Object.assign({}, baseRequest, { allowedPaymentMethods: [cardPaymentMethod()] })
+     ).then(res => {
+       if (!res.result) { $('fallback').textContent = 'Google Pay is not available on this device.'; return; }
+       $('fallback').textContent = '';
+       $('gpayHost').appendChild(paymentsClient.createButton({
+         onClick: pay, buttonType: 'buy', buttonSizeMode: 'fill',
+         buttonColor: currentButtonColor()
+       }));
+     }).catch(e => { $('fallback').textContent = 'Google Pay check failed.'; debug(e); });
+   }
 
   function pay(){
     const t = totals();
